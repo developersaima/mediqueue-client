@@ -35,7 +35,7 @@ export default function RegisterPage() {
 
    const handleGoogleLogin = async () => {
     await signInGoogle();
-    toast.success("Login successfull with google")
+    // toast.success("Login successfull with google")
     router.push("/")
   };
 

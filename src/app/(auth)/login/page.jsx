@@ -6,7 +6,7 @@ import { signIn, signInGoogle } from "../../../lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
-    const router=useRouter();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -23,20 +23,19 @@ export default function LoginPage() {
       {
         onSuccess: () => {
           toast.success("Login successful!");
-          router.push("/")
-
+          router.push("/");
         },
         onError: (ctx) => {
           toast.error(ctx.error.message || "Login failed!");
         },
-      }
+      },
     );
   };
 
   const handleGoogleLogin = async () => {
     await signInGoogle();
-    toast.success("Login successfull with google")
-    router.push("/")
+
+    router.push("/");
   };
 
   return (
