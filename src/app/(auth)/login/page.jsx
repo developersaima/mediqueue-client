@@ -2,7 +2,7 @@
 import { useForm } from "react-hook-form";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { signIn } from "../../../lib/auth-client";
+import { signIn, signInGoogle } from "../../../lib/auth-client";
 import { useRouter } from "next/navigation";
 
 export default function LoginPage() {
