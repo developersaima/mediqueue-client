@@ -15,8 +15,6 @@ import { authClient, useSession } from "../../../lib/auth-client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-
-
 export default function TutorDetailsPage({ params: paramsPromise }) {
   const router = useRouter();
 
@@ -85,11 +83,9 @@ export default function TutorDetailsPage({ params: paramsPromise }) {
     );
   }
 
-  const currentDate = new Date();
-
-  const sessionDate = new Date(tutor.sessionStartDate);
-
-  const bookingExpired = currentDate >= sessionDate;
+  const bookingExpired =
+    new Date().getTime() >=
+    new Date(tutor.sessionStartDate).getTime();
 
   const noSlotsLeft = parseInt(tutor.totalSlot) <= 0;
 
@@ -116,7 +112,7 @@ export default function TutorDetailsPage({ params: paramsPromise }) {
   };
 
   const handleConfirmBooking = async () => {
-    if (!phone) {
+    if (!phone.trim()) {
       toast.error("Please enter your phone number");
 
       return;
@@ -157,7 +153,7 @@ export default function TutorDetailsPage({ params: paramsPromise }) {
 
         setIsModalOpen(false);
 
-        fetchTutorDetails();
+        await fetchTutorDetails();
 
         router.push("/my-bookings");
       } else {
