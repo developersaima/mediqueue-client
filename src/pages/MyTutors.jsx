@@ -49,7 +49,6 @@ export default function MyTutorsPage() {
       if (res.ok) {
         const data = await res.json();
         setTutors(data);
-        
       }
     } catch (error) {
       console.error("Error fetching tutors:", error);
@@ -107,17 +106,20 @@ export default function MyTutorsPage() {
       const formData = new FormData();
       formData.append("image", file);
 
-      const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMAGEBB_API_KEY}`, {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        `https://api.imgbb.com/1/upload?key=${IMAGEBB_API_KEY}`,
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       const data = await response.json();
 
       if (data.success) {
         const imageUrl = data.data.url;
         setImagePreview(imageUrl);
-        setEditFormData(prev => ({ ...prev, photo: imageUrl }));
+        setEditFormData((prev) => ({ ...prev, photo: imageUrl }));
         toast.success("Image uploaded successfully!");
         return imageUrl;
       } else {
@@ -136,7 +138,7 @@ export default function MyTutorsPage() {
     // availableSlots অথবা alternative key থাকলে দুটোই হ্যান্ডেল করার জন্য সেফ স্প্লিট মেথড
     const rawSlots = tutor.availableSlots || tutor.availableDaysAndTime || "";
     const cleanSlots = rawSlots.trim();
-    
+
     let availableDays = "";
     let availableTime = "";
 
@@ -149,7 +151,7 @@ export default function MyTutorsPage() {
         availableDays = cleanSlots;
       }
     }
-    
+
     setEditFormData({
       _id: tutor._id || "",
       name: tutor.name || "",
@@ -159,7 +161,9 @@ export default function MyTutorsPage() {
       availableTime: availableTime,
       hourlyFee: tutor.hourlyFee !== undefined ? tutor.hourlyFee : "",
       totalSlot: tutor.totalSlot !== undefined ? tutor.totalSlot : "",
-      sessionStartDate: tutor.sessionStartDate ? tutor.sessionStartDate.split("T")[0] : "",
+      sessionStartDate: tutor.sessionStartDate
+        ? tutor.sessionStartDate.split("T")[0]
+        : "",
       institution: tutor.institution || "",
       experience: tutor.experience || "1-2 years",
       location: tutor.location || "",
@@ -195,7 +199,7 @@ export default function MyTutorsPage() {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!editFormData.photo) {
       toast.error("Please upload a profile photo");
       return;
@@ -253,7 +257,9 @@ export default function MyTutorsPage() {
   if (!session?.user) {
     return (
       <div className="text-center py-20">
-        <h2 className="text-2xl font-bold text-error">Please log in to view your tutors.</h2>
+        <h2 className="text-2xl font-bold text-error">
+          Please log in to view your tutors.
+        </h2>
       </div>
     );
   }
@@ -262,17 +268,17 @@ export default function MyTutorsPage() {
     <div className="bg-gradient-to-br from-base-200/40 via-base-100 to-base-200/20 min-h-screen py-12 px-4 md:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+            <LuFolderGit2 className="w-6 h-6 text-white" />
+          </div>
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+            <h1 className="text-3xl font-bold text-base-content tracking-tight">
               My Tutors
             </h1>
-            <p className="text-base-content/60 mt-1 text-sm">
-              Manage your registered tutors
+            <p className="text-base-content/60 text-sm mt-0.5">
+              Manage your registered tutors and monitor their schedules.
             </p>
-          </div>
-          <div className="badge badge-primary badge-lg gap-2 font-semibold">
-            {tutors.length} {tutors.length === 1 ? "Tutor" : "Tutors"}
           </div>
         </div>
 
@@ -282,8 +288,12 @@ export default function MyTutorsPage() {
               <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center">
                 <LuFolderGit2 className="w-10 h-10 text-primary" />
               </div>
-              <p className="text-base-content/60 font-medium text-lg">No tutors added yet</p>
-              <p className="text-base-content/40 text-sm">Start by adding your first tutor</p>
+              <p className="text-base-content/60 font-medium text-lg">
+                No tutors added yet
+              </p>
+              <p className="text-base-content/40 text-sm">
+                Start by adding your first tutor
+              </p>
             </div>
           </div>
         ) : (
@@ -303,36 +313,49 @@ export default function MyTutorsPage() {
                 </thead>
                 <tbody>
                   {tutors.map((tutor) => (
-                    <tr 
-                      key={tutor._id} 
+                    <tr
+                      key={tutor._id}
                       className="hover:bg-base-200/30 border-b border-base-200/50 last:border-none transition-all duration-200 group"
                     >
                       <td className="py-4 px-6">
                         <div className="flex items-center gap-3">
                           <div className="avatar">
                             <div className="w-10 h-10 rounded-full ring-2 ring-primary/20">
-                              <img 
-                                src={tutor.photo || "https://via.placeholder.com/40"} 
+                              <img
+                                src={
+                                  tutor.photo ||
+                                  "https://via.placeholder.com/40"
+                                }
                                 alt={tutor.name}
                                 className="object-cover"
                               />
                             </div>
                           </div>
-                          <span className="font-medium text-base-content">{tutor.name}</span>
+                          <span className="font-medium text-base-content">
+                            {tutor.name}
+                          </span>
                         </div>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="badge badge-ghost badge-md font-medium text-base-content/80">{tutor.subject}</span>
+                        <span className="badge badge-ghost badge-md font-medium text-base-content/80">
+                          {tutor.subject}
+                        </span>
                       </td>
                       <td className="py-4 px-6 text-base-content/60">
                         {/* টেবিল লিস্টে ভ্যালু শো করানোর জন্য fallback সহ ফিক্স করা হয়েছে */}
                         <span className="text-xs font-medium">
-                          {tutor.availableSlots || tutor.availableDaysAndTime || "N/A"}
+                          {tutor.availableSlots ||
+                            tutor.availableDaysAndTime ||
+                            "N/A"}
                         </span>
                       </td>
                       <td className="py-4 px-6">
-                        <span className="font-semibold text-primary">৳{tutor.hourlyFee}</span>
-                        <span className="text-xs text-base-content/40">/hr</span>
+                        <span className="font-semibold text-primary">
+                          ৳{tutor.hourlyFee}
+                        </span>
+                        <span className="text-xs text-base-content/40">
+                          /hr
+                        </span>
                       </td>
                       <td className="py-4 px-6">
                         <span className="badge badge-success bg-success/10 text-success border-none font-semibold text-xs px-3 py-1.5">
@@ -340,11 +363,16 @@ export default function MyTutorsPage() {
                         </span>
                       </td>
                       <td className="py-4 px-6 text-base-content/60 text-xs">
-                        {tutor.sessionStartDate ? new Date(tutor.sessionStartDate).toLocaleDateString("en-US", {
-                          month: "short",
-                          day: "numeric",
-                          year: "numeric",
-                        }) : "N/A"}
+                        {tutor.sessionStartDate
+                          ? new Date(tutor.sessionStartDate).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )
+                          : "N/A"}
                       </td>
                       <td className="py-4 px-6">
                         <div className="flex items-center justify-center gap-2">
@@ -378,7 +406,10 @@ export default function MyTutorsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-base-100 w-full max-w-sm rounded-2xl p-6 relative shadow-2xl border border-base-200 text-center animate-in slide-in-from-bottom-4 duration-200">
             <button
-              onClick={() => { setIsDeleteModalOpen(false); setSelectedTutorId(null); }}
+              onClick={() => {
+                setIsDeleteModalOpen(false);
+                setSelectedTutorId(null);
+              }}
               className="btn btn-ghost btn-sm btn-square absolute right-4 top-4"
             >
               <LuX className="w-5 h-5" />
@@ -387,14 +418,20 @@ export default function MyTutorsPage() {
               <div className="w-16 h-16 rounded-full bg-error/10 flex items-center justify-center mx-auto mb-4">
                 <LuTrash2 className="w-8 h-8 text-error" />
               </div>
-              <h3 className="font-bold text-xl text-base-content mb-2">Delete Tutor?</h3>
+              <h3 className="font-bold text-xl text-base-content mb-2">
+                Delete Tutor?
+              </h3>
               <p className="text-sm text-base-content/60 px-2">
-                Are you sure you want to delete this tutor entry? This action cannot be undone.
+                Are you sure you want to delete this tutor entry? This action
+                cannot be undone.
               </p>
             </div>
             <div className="grid grid-cols-2 gap-3 mt-8">
               <button
-                onClick={() => { setIsDeleteModalOpen(false); setSelectedTutorId(null); }}
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setSelectedTutorId(null);
+                }}
                 className="btn btn-outline border-base-300 hover:bg-base-200"
                 disabled={deleteLoading}
               >
@@ -405,7 +442,11 @@ export default function MyTutorsPage() {
                 className="btn btn-error text-white hover:bg-error/90"
                 disabled={deleteLoading}
               >
-                {deleteLoading ? <span className="loading loading-spinner loading-sm"></span> : "Delete"}
+                {deleteLoading ? (
+                  <span className="loading loading-spinner loading-sm"></span>
+                ) : (
+                  "Delete"
+                )}
               </button>
             </div>
           </div>
@@ -417,30 +458,39 @@ export default function MyTutorsPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm overflow-y-auto animate-in fade-in duration-200">
           <div className="bg-base-100 w-full max-w-3xl rounded-2xl p-8 relative shadow-2xl border border-base-200 my-8 animate-in slide-in-from-bottom-4 duration-200">
             <button
-              onClick={() => { setIsEditModalOpen(false); setImagePreview(null); }}
+              onClick={() => {
+                setIsEditModalOpen(false);
+                setImagePreview(null);
+              }}
               className="btn btn-ghost btn-sm btn-square absolute right-4 top-4"
             >
               <LuX className="w-5 h-5" />
             </button>
-            
+
             <div className="flex items-center gap-3 mb-6">
               <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
                 <LuFolderGit2 className="w-5 h-5 text-primary" />
               </div>
-              <h3 className="font-bold text-2xl text-base-content">Update Tutor Profile</h3>
+              <h3 className="font-bold text-2xl text-base-content">
+                Update Tutor Profile
+              </h3>
             </div>
-            
+
             <form onSubmit={handleEditSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* Name */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Full Name</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Full Name
+                    </span>
                   </label>
                   <input
                     type="text"
                     value={editFormData.name}
-                    onChange={(e) => setEditFormData({ ...editFormData, name: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({ ...editFormData, name: e.target.value })
+                    }
                     className="input input-bordered w-full focus:input-primary transition-all"
                     placeholder="Enter tutor name"
                     required
@@ -450,13 +500,15 @@ export default function MyTutorsPage() {
                 {/* Image Upload */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Profile Photo</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Profile Photo
+                    </span>
                   </label>
                   <div className="flex items-center gap-4">
                     <div className="avatar">
                       <div className="w-16 h-16 rounded-full ring-2 ring-primary/20 overflow-hidden">
-                        <img 
-                          src={imagePreview || "https://via.placeholder.com/64"} 
+                        <img
+                          src={imagePreview || "https://via.placeholder.com/64"}
                           alt="Preview"
                           className="w-full h-full object-cover"
                         />
@@ -470,7 +522,9 @@ export default function MyTutorsPage() {
                           onChange={handleImageUpload}
                           disabled={isUploading}
                           className={`file-input file-input-bordered w-full file-input-sm transition-all ${
-                            isUploading ? "file-input-disabled opacity-50" : "focus:file-input-primary"
+                            isUploading
+                              ? "file-input-disabled opacity-50"
+                              : "focus:file-input-primary"
                           }`}
                         />
                         {isUploading && (
@@ -489,11 +543,18 @@ export default function MyTutorsPage() {
                 {/* Subject */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Subject</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Subject
+                    </span>
                   </label>
                   <select
                     value={editFormData.subject}
-                    onChange={(e) => setEditFormData({ ...editFormData, subject: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        subject: e.target.value,
+                      })
+                    }
                     className="select select-bordered w-full focus:select-primary transition-all"
                   >
                     <option value="Mathematics">Mathematics</option>
@@ -511,11 +572,18 @@ export default function MyTutorsPage() {
                 {/* Available Days */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Available Days</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Available Days
+                    </span>
                   </label>
                   <select
                     value={editFormData.availableDays}
-                    onChange={(e) => setEditFormData({ ...editFormData, availableDays: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        availableDays: e.target.value,
+                      })
+                    }
                     className="select select-bordered w-full focus:select-primary transition-all"
                     required
                   >
@@ -531,18 +599,31 @@ export default function MyTutorsPage() {
                 {/* Available Time */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Available Time</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Available Time
+                    </span>
                   </label>
                   <select
                     value={editFormData.availableTime}
-                    onChange={(e) => setEditFormData({ ...editFormData, availableTime: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        availableTime: e.target.value,
+                      })
+                    }
                     className="select select-bordered w-full focus:select-primary transition-all"
                     required
                   >
                     <option value="">Select time</option>
-                    <option value="9:00 AM - 12:00 PM">9:00 AM - 12:00 PM</option>
-                    <option value="10:00 AM - 12:00 PM">10:00 AM - 12:00 PM</option>
-                    <option value="12:00 PM - 3:00 PM">12:00 PM - 3:00 PM</option>
+                    <option value="9:00 AM - 12:00 PM">
+                      9:00 AM - 12:00 PM
+                    </option>
+                    <option value="10:00 AM - 12:00 PM">
+                      10:00 AM - 12:00 PM
+                    </option>
+                    <option value="12:00 PM - 3:00 PM">
+                      12:00 PM - 3:00 PM
+                    </option>
                     <option value="3:00 PM - 6:00 PM">3:00 PM - 6:00 PM</option>
                     <option value="6:00 PM - 9:00 PM">6:00 PM - 9:00 PM</option>
                     <option value="Flexible">Flexible</option>
@@ -552,12 +633,19 @@ export default function MyTutorsPage() {
                 {/* Hourly Fee */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Hourly Fee (৳)</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Hourly Fee (৳)
+                    </span>
                   </label>
                   <input
                     type="number"
                     value={editFormData.hourlyFee}
-                    onChange={(e) => setEditFormData({ ...editFormData, hourlyFee: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        hourlyFee: e.target.value,
+                      })
+                    }
                     className="input input-bordered w-full focus:input-primary transition-all"
                     placeholder="e.g. 500"
                     required
@@ -567,12 +655,19 @@ export default function MyTutorsPage() {
                 {/* Total Slot */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Total Slots</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Total Slots
+                    </span>
                   </label>
                   <input
                     type="number"
                     value={editFormData.totalSlot}
-                    onChange={(e) => setEditFormData({ ...editFormData, totalSlot: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        totalSlot: e.target.value,
+                      })
+                    }
                     className="input input-bordered w-full focus:input-primary transition-all"
                     placeholder="e.g. 10"
                     required
@@ -582,12 +677,19 @@ export default function MyTutorsPage() {
                 {/* Session Start Date */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Start Date</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Start Date
+                    </span>
                   </label>
                   <input
                     type="date"
                     value={editFormData.sessionStartDate}
-                    onChange={(e) => setEditFormData({ ...editFormData, sessionStartDate: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        sessionStartDate: e.target.value,
+                      })
+                    }
                     className="input input-bordered w-full focus:input-primary transition-all"
                     required
                   />
@@ -596,12 +698,19 @@ export default function MyTutorsPage() {
                 {/* Institution */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Institution</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Institution
+                    </span>
                   </label>
                   <input
                     type="text"
                     value={editFormData.institution}
-                    onChange={(e) => setEditFormData({ ...editFormData, institution: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        institution: e.target.value,
+                      })
+                    }
                     className="input input-bordered w-full focus:input-primary transition-all"
                     placeholder="e.g. University of Dhaka"
                     required
@@ -611,11 +720,18 @@ export default function MyTutorsPage() {
                 {/* Experience */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Experience</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Experience
+                    </span>
                   </label>
                   <select
                     value={editFormData.experience}
-                    onChange={(e) => setEditFormData({ ...editFormData, experience: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        experience: e.target.value,
+                      })
+                    }
                     className="select select-bordered w-full focus:select-primary transition-all"
                     required
                   >
@@ -631,12 +747,19 @@ export default function MyTutorsPage() {
                 {/* Location */}
                 <div className="form-control">
                   <label className="label py-1">
-                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Location</span>
+                    <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                      Location
+                    </span>
                   </label>
                   <input
                     type="text"
                     value={editFormData.location}
-                    onChange={(e) => setEditFormData({ ...editFormData, location: e.target.value })}
+                    onChange={(e) =>
+                      setEditFormData({
+                        ...editFormData,
+                        location: e.target.value,
+                      })
+                    }
                     className="input input-bordered w-full focus:input-primary transition-all"
                     placeholder="e.g. Dhaka, Bangladesh"
                     required
@@ -647,20 +770,32 @@ export default function MyTutorsPage() {
               {/* Teaching Mode - Radio */}
               <div className="form-control">
                 <label className="label py-1">
-                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">Teaching Mode</span>
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/70">
+                    Teaching Mode
+                  </span>
                 </label>
                 <div className="flex gap-6 pt-1">
                   {["Online", "Offline", "Both"].map((mode) => (
-                    <label key={mode} className="flex items-center gap-2 cursor-pointer">
+                    <label
+                      key={mode}
+                      className="flex items-center gap-2 cursor-pointer"
+                    >
                       <input
                         type="radio"
                         name="teachingMode"
                         value={mode}
                         checked={editFormData.teachingMode === mode}
-                        onChange={(e) => setEditFormData({ ...editFormData, teachingMode: e.target.value })}
+                        onChange={(e) =>
+                          setEditFormData({
+                            ...editFormData,
+                            teachingMode: e.target.value,
+                          })
+                        }
                         className="radio radio-primary radio-sm"
                       />
-                      <span className="text-sm font-medium text-base-content/80">{mode}</span>
+                      <span className="text-sm font-medium text-base-content/80">
+                        {mode}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -670,7 +805,10 @@ export default function MyTutorsPage() {
               <div className="flex justify-end gap-3 pt-4 border-t border-base-200">
                 <button
                   type="button"
-                  onClick={() => { setIsEditModalOpen(false); setImagePreview(null); }}
+                  onClick={() => {
+                    setIsEditModalOpen(false);
+                    setImagePreview(null);
+                  }}
                   className="btn btn-ghost hover:bg-base-200"
                   disabled={editLoading || isUploading}
                 >
@@ -681,7 +819,11 @@ export default function MyTutorsPage() {
                   className="btn btn-primary px-8 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all text-white"
                   disabled={editLoading || isUploading}
                 >
-                  {editLoading ? <span className="loading loading-spinner loading-sm"></span> : "Save Changes"}
+                  {editLoading ? (
+                    <span className="loading loading-spinner loading-sm"></span>
+                  ) : (
+                    "Save Changes"
+                  )}
                 </button>
               </div>
             </form>

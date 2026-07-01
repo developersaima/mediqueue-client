@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { LuX } from "react-icons/lu";
+import { LuCalendarCheck, LuFolderGit2, LuX } from "react-icons/lu";
 import toast from "react-hot-toast";
 import { authClient, useSession } from "../lib/auth-client";
 
@@ -14,16 +14,13 @@ export default function MyBookingsPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const [selectedBookingId, setSelectedBookingId] =
-    useState(null);
+  const [selectedBookingId, setSelectedBookingId] = useState(null);
 
   const [cancelLoading, setCancelLoading] = useState(false);
 
   const fetchMyBookings = async () => {
     try {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_URL ||
-        "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:5000";
 
       const { data: tokenData } = await authClient.token();
 
@@ -33,27 +30,22 @@ export default function MyBookingsPage() {
         return;
       }
 
-      const res = await fetch(
-        `${baseUrl}/api/my-bookings`,
-        {
-          method: "GET",
+      const res = await fetch(`${baseUrl}/api/my-bookings`, {
+        method: "GET",
 
-          headers: {
-            Authorization: `Bearer ${tokenData.token}`,
-          },
+        headers: {
+          Authorization: `Bearer ${tokenData.token}`,
+        },
 
-          cache: "no-store",
-        }
-      );
+        cache: "no-store",
+      });
 
       const data = await res.json();
 
       if (res.ok) {
         setBookings(data);
       } else {
-        toast.error(
-          data?.message || "Failed to fetch bookings"
-        );
+        toast.error(data?.message || "Failed to fetch bookings");
       }
     } catch (error) {
       console.log(error);
@@ -82,9 +74,7 @@ export default function MyBookingsPage() {
     setCancelLoading(true);
 
     try {
-      const baseUrl =
-        process.env.NEXT_PUBLIC_URL ||
-        "http://localhost:5000";
+      const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:5000";
 
       const { data: tokenData } = await authClient.token();
 
@@ -96,15 +86,13 @@ export default function MyBookingsPage() {
           headers: {
             Authorization: `Bearer ${tokenData?.token}`,
           },
-        }
+        },
       );
 
       const responseData = await res.json();
 
       if (res.ok) {
-        toast.success(
-          "Booking canceled successfully!"
-        );
+        toast.success("Booking canceled successfully!");
 
         setBookings((prev) =>
           prev.map((booking) =>
@@ -113,18 +101,15 @@ export default function MyBookingsPage() {
                   ...booking,
                   status: "canceled",
                 }
-              : booking
-          )
+              : booking,
+          ),
         );
 
         setIsModalOpen(false);
 
         setSelectedBookingId(null);
       } else {
-        toast.error(
-          responseData.message ||
-            "Failed to cancel booking"
-        );
+        toast.error(responseData.message || "Failed to cancel booking");
       }
     } catch (error) {
       console.log(error);
@@ -160,9 +145,19 @@ export default function MyBookingsPage() {
   return (
     <div className="bg-base-200/40 min-h-screen py-12 px-4 md:px-8">
       <div className="max-w-6xl mx-auto">
-        <h1 className="text-2xl font-black text-base-content mb-6">
-          My Bookings
-        </h1>
+        <div className="flex items-center gap-4 mb-8">
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+            <LuCalendarCheck className="w-6 h-6 text-white" />
+          </div>
+          <div>
+            <h1 className="text-3xl font-bold text-base-content tracking-tight">
+              My Bookings
+            </h1>
+            <p className="text-base-content/60 text-sm mt-0.5">
+              Manage your bookings and their schedules.
+            </p>
+          </div>
+        </div>
 
         {bookings.length === 0 ? (
           <div className="bg-base-100 rounded-2xl p-12 text-center border border-base-300/60">
@@ -176,29 +171,17 @@ export default function MyBookingsPage() {
               <table className="table w-full text-sm">
                 <thead>
                   <tr className="bg-base-200/50 text-base-content/70 border-b border-base-300/60">
-                    <th className="py-4 px-6 font-bold">
-                      Name
-                    </th>
+                    <th className="py-4 px-6 font-bold">Name</th>
 
-                    <th className="py-4 px-6 font-bold">
-                      Phone
-                    </th>
+                    <th className="py-4 px-6 font-bold">Phone</th>
 
-                    <th className="py-4 px-6 font-bold">
-                      Tutor Name
-                    </th>
+                    <th className="py-4 px-6 font-bold">Tutor Name</th>
 
-                    <th className="py-4 px-6 font-bold">
-                      Email
-                    </th>
+                    <th className="py-4 px-6 font-bold">Email</th>
 
-                    <th className="py-4 px-6 font-bold text-center">
-                      Status
-                    </th>
+                    <th className="py-4 px-6 font-bold text-center">Status</th>
 
-                    <th className="py-4 px-6 text-center font-bold">
-                      Cancel
-                    </th>
+                    <th className="py-4 px-6 text-center font-bold">Cancel</th>
                   </tr>
                 </thead>
 
@@ -227,14 +210,12 @@ export default function MyBookingsPage() {
                       <td className="py-4 px-6 text-center">
                         <span
                           className={`badge font-semibold text-xs px-3 py-2 border-none rounded-md ${
-                            booking.status ===
-                            "canceled"
+                            booking.status === "canceled"
                               ? "bg-error/10 text-error"
                               : "bg-success/10 text-success"
                           }`}
                         >
-                          {booking.status ===
-                          "canceled"
+                          {booking.status === "canceled"
                             ? "Canceled"
                             : "Confirmed"}
                         </span>
@@ -242,18 +223,10 @@ export default function MyBookingsPage() {
 
                       <td className="py-4 px-6 text-center">
                         <button
-                          onClick={() =>
-                            triggerCancelModal(
-                              booking._id
-                            )
-                          }
-                          disabled={
-                            booking.status ===
-                            "canceled"
-                          }
+                          onClick={() => triggerCancelModal(booking._id)}
+                          disabled={booking.status === "canceled"}
                           className={`btn btn-sm btn-circle shadow-sm border ${
-                            booking.status ===
-                            "canceled"
+                            booking.status === "canceled"
                               ? "btn-ghost text-base-content/20 bg-base-200"
                               : "btn-ghost text-error hover:bg-error/10 border-base-200"
                           }`}
@@ -290,8 +263,7 @@ export default function MyBookingsPage() {
               </h3>
 
               <p className="text-sm text-base-content/60 px-2">
-                Are you sure you want to cancel
-                this tutor session?
+                Are you sure you want to cancel this tutor session?
               </p>
             </div>
 

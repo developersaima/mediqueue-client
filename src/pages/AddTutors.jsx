@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { authClient } from "../lib/auth-client";
 import { useState } from "react";
-import { LuUpload, LuUserPlus, LuCalendar, LuMapPin, LuBuilding, LuClock, LuDollarSign } from "react-icons/lu";
+import { LuUpload, LuUserPlus, LuCalendar, LuMapPin, LuBuilding, LuClock, LuDollarSign, LuFolderGit2 } from "react-icons/lu";
 import { FiLoader } from "react-icons/fi";
 
 const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_KEY;
@@ -50,7 +50,6 @@ export default function AddTutors() {
       const formData = new FormData();
       formData.append("image", file);
 
-      // Appending key to URL or body
       const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMAGEBB_API_KEY}`, {
         method: "POST",
         body: formData,
@@ -62,7 +61,7 @@ export default function AddTutors() {
         const imageUrl = data.data.url;
         setImagePreview(imageUrl);
         setValue("photo", imageUrl); 
-        clearErrors("photo"); // Remove validation error if any
+        clearErrors("photo"); 
         toast.success("Image uploaded successfully!");
         return imageUrl;
       } else {
@@ -92,14 +91,12 @@ export default function AddTutors() {
       return;
     }
 
-    // Show local preview immediately
     const reader = new FileReader();
     reader.onloadend = () => {
       setImagePreview(reader.result);
     };
     reader.readAsDataURL(file);
 
-    // Upload to ImageBB
     await uploadImageToImageBB(file);
   };
 
@@ -150,26 +147,26 @@ export default function AddTutors() {
   };
 
   return (
-    <div className="min-h-screen  py-12 px-4 md:px-8 text-slate-800">
+    <div className="min-h-screen bg-gradient-to-br from-base-200/40 via-base-100 to-base-200/20 py-12 px-4 md:px-8 text-base-content">
       <div className="max-w-4xl mx-auto">
         
-        {/* Header Section - Modern Deep Blue Minimalist Style */}
+        {/* Header Section - Seamless DaisyUI Light & Dark Support */}
         <div className="flex items-center gap-4 mb-8">
-          <div className="w-12 h-12 rounded-xl bg-primary 600 flex items-center justify-center shadow-md shadow-primary 200">
-            <LuUserPlus className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center shadow-md shadow-primary/20">
+            <LuFolderGit2 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-slate-900 tracking-tight">
+            <h1 className="text-3xl font-bold text-base-content tracking-tight">
               Add New Tutor
             </h1>
-            <p className="text-slate-500 text-sm mt-0.5">
+            <p className="text-base-content/60 text-sm mt-0.5">
               Fill in the details to register a new tutor to your program.
             </p>
           </div>
         </div>
 
         {/* Form Container */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200/80 overflow-hidden">
+        <div className="bg-base-100 rounded-2xl shadow-xl border border-base-300/60 overflow-hidden">
           <form onSubmit={handleSubmit(onSubmit)} className="p-6 md:p-8 space-y-6">
             
             {/* Tutor Name & Photo */}
@@ -177,8 +174,8 @@ export default function AddTutors() {
               {/* Tutor Name */}
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuUserPlus className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuUserPlus className="w-3.5 h-3.5 text-primary" />
                     Full Name
                   </span>
                 </label>
@@ -186,11 +183,11 @@ export default function AddTutors() {
                   type="text"
                   placeholder="Enter tutor's full name"
                   {...register("name", { required: "Name is required" })}
-                  className={`input input-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.name ? "border-red-500 focus:border-red-500 focus:ring-red-500" : ""}`}
+                  className={`input input-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.name ? "border-error focus:border-error focus:ring-error" : ""}`}
                 />
                 {errors.name && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.name.message}
                   </span>
                 )}
@@ -199,18 +196,18 @@ export default function AddTutors() {
               {/* Photo Upload */}
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuUpload className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuUpload className="w-3.5 h-3.5 text-primary" />
                     Profile Photo
                   </span>
                 </label>
-                <div className="flex items-center gap-4 bg-slate-50/50 p-3 rounded-xl border border-dashed border-slate-200">
+                <div className="flex items-center gap-4 bg-base-200/30 p-3 rounded-xl border border-dashed border-base-300">
                   <div className="avatar">
-                    <div className={`w-14 h-14 rounded-full ring-2 ${imagePreview ? "ring-primary 500/30" : "ring-slate-200"} flex items-center justify-center bg-slate-100 overflow-hidden`}>
+                    <div className={`w-14 h-14 rounded-full ring-2 ${imagePreview ? "ring-primary/30" : "ring-base-300"} flex items-center justify-center bg-base-200 overflow-hidden`}>
                       {imagePreview ? (
                         <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
-                        <LuUpload className="w-5 h-5 text-slate-400" />
+                        <LuUpload className="w-5 h-5 text-base-content/40" />
                       )}
                     </div>
                   </div>
@@ -221,23 +218,23 @@ export default function AddTutors() {
                         accept="image/*"
                         onChange={handleImageUpload}
                         disabled={isUploading}
-                        className="file-input file-input-bordered w-full file-input-sm bg-white border-slate-200 rounded-lg text-slate-600 file:bg-slate-100 file:text-slate-700 file:border-0"
+                        className="file-input file-input-bordered w-full file-input-sm bg-base-100 border-base-300 rounded-lg text-base-content file:bg-base-200 file:text-base-content file:border-0"
                       />
                       {isUploading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/80 rounded-lg">
-                          <FiLoader className="w-5 h-5 animate-spin text-primary 600" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-base-100/80 rounded-lg">
+                          <FiLoader className="w-5 h-5 animate-spin text-primary" />
                         </div>
                       )}
                     </div>
                     <input type="hidden" {...register("photo", { required: "Photo is required" })} />
-                    <p className="text-[11px] text-slate-400 mt-1">
+                    <p className="text-[11px] text-base-content/40 mt-1">
                       Max: 5MB • JPEG, PNG, GIF, WEBP
                     </p>
                   </div>
                 </div>
                 {errors.photo && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.photo.message}
                   </span>
                 )}
@@ -247,13 +244,13 @@ export default function AddTutors() {
             {/* Subject */}
             <div className="form-control w-full">
               <label className="label pb-2">
-                <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500">
+                <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60">
                   Subject / Category
                 </span>
               </label>
               <select
                 {...register("subject", { required: "Select a subject" })}
-                className={`select select-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.subject ? "border-red-500" : ""}`}
+                className={`select select-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.subject ? "border-error" : ""}`}
               >
                 <option value="">Select Subject</option>
                 <option value="Mathematics">Mathematics</option>
@@ -268,8 +265,8 @@ export default function AddTutors() {
                 <option value="Business Studies">Business Studies</option>
               </select>
               {errors.subject && (
-                <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                   {errors.subject.message}
                 </span>
               )}
@@ -279,14 +276,14 @@ export default function AddTutors() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuCalendar className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuCalendar className="w-3.5 h-3.5 text-primary" />
                     Available Days
                   </span>
                 </label>
                 <select
                   {...register("availableDays", { required: "Select available days" })}
-                  className={`select select-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.availableDays ? "border-red-500" : ""}`}
+                  className={`select select-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.availableDays ? "border-error" : ""}`}
                 >
                   <option value="">Select Days</option>
                   <option value="Mon-Fri">Monday - Friday</option>
@@ -297,8 +294,8 @@ export default function AddTutors() {
                   <option value="Custom">Custom Schedule</option>
                 </select>
                 {errors.availableDays && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.availableDays.message}
                   </span>
                 )}
@@ -306,14 +303,14 @@ export default function AddTutors() {
 
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuClock className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuClock className="w-3.5 h-3.5 text-primary" />
                     Available Time
                   </span>
                 </label>
                 <select
                   {...register("availableTime", { required: "Select available time" })}
-                  className={`select select-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.availableTime ? "border-red-500" : ""}`}
+                  className={`select select-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.availableTime ? "border-error" : ""}`}
                 >
                   <option value="">Select Time</option>
                   <option value="8:00 AM - 10:00 AM">8:00 AM - 10:00 AM</option>
@@ -326,8 +323,8 @@ export default function AddTutors() {
                   <option value="Flexible">Flexible</option>
                 </select>
                 {errors.availableTime && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.availableTime.message}
                   </span>
                 )}
@@ -338,8 +335,8 @@ export default function AddTutors() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuDollarSign className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuDollarSign className="w-3.5 h-3.5 text-primary" />
                     Hourly Fee (৳)
                   </span>
                 </label>
@@ -350,11 +347,11 @@ export default function AddTutors() {
                     required: "Fee is required",
                     min: { value: 0, message: "Fee must be positive" },
                   })}
-                  className={`input input-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.hourlyFee ? "border-red-500" : ""}`}
+                  className={`input input-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.hourlyFee ? "border-error" : ""}`}
                 />
                 {errors.hourlyFee && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.hourlyFee.message}
                   </span>
                 )}
@@ -362,7 +359,7 @@ export default function AddTutors() {
 
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500">
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60">
                     Total Slots Available
                   </span>
                 </label>
@@ -373,11 +370,11 @@ export default function AddTutors() {
                     required: "Slot count is required",
                     min: { value: 1, message: "Must have at least 1 slot" },
                   })}
-                  className={`input input-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.totalSlot ? "border-red-500" : ""}`}
+                  className={`input input-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.totalSlot ? "border-error" : ""}`}
                 />
                 {errors.totalSlot && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.totalSlot.message}
                   </span>
                 )}
@@ -388,19 +385,19 @@ export default function AddTutors() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuCalendar className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuCalendar className="w-3.5 h-3.5 text-primary" />
                     Session Start Date
                   </span>
                 </label>
                 <input
                   type="date"
                   {...register("sessionStartDate", { required: "Start date is required" })}
-                  className={`input input-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.sessionStartDate ? "border-red-500" : ""}`}
+                  className={`input input-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.sessionStartDate ? "border-error" : ""}`}
                 />
                 {errors.sessionStartDate && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.sessionStartDate.message}
                   </span>
                 )}
@@ -408,8 +405,8 @@ export default function AddTutors() {
 
               <div className="form-control w-full">
                 <label className="label pb-2">
-                  <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                    <LuBuilding className="w-3.5 h-3.5 text-primary 500" />
+                  <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                    <LuBuilding className="w-3.5 h-3.5 text-primary" />
                     Institution
                   </span>
                 </label>
@@ -417,11 +414,11 @@ export default function AddTutors() {
                   type="text"
                   placeholder="e.g. University of Dhaka"
                   {...register("institution", { required: "Institution is required" })}
-                  className={`input input-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.institution ? "border-red-500" : ""}`}
+                  className={`input input-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.institution ? "border-error" : ""}`}
                 />
                 {errors.institution && (
-                  <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                  <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                    <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                     {errors.institution.message}
                   </span>
                 )}
@@ -431,13 +428,13 @@ export default function AddTutors() {
             {/* Experience */}
             <div className="form-control w-full">
               <label className="label pb-2">
-                <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500">
+                <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60">
                   Experience
                 </span>
               </label>
               <select
                 {...register("experience", { required: "Experience level is required" })}
-                className={`select select-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.experience ? "border-red-500" : ""}`}
+                className={`select select-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.experience ? "border-error" : ""}`}
               >
                 <option value="">Select Experience Level</option>
                 <option value="0-1 years">0-1 years (Fresher)</option>
@@ -448,8 +445,8 @@ export default function AddTutors() {
                 <option value="10+ years">10+ years (Expert)</option>
               </select>
               {errors.experience && (
-                <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                   {errors.experience.message}
                 </span>
               )}
@@ -458,8 +455,8 @@ export default function AddTutors() {
             {/* Location */}
             <div className="form-control w-full">
               <label className="label pb-2">
-                <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500 flex items-center gap-2">
-                  <LuMapPin className="w-3.5 h-3.5 text-primary 500" />
+                <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60 flex items-center gap-2">
+                  <LuMapPin className="w-3.5 h-3.5 text-primary" />
                   Location (Area/City)
                 </span>
               </label>
@@ -467,11 +464,11 @@ export default function AddTutors() {
                 type="text"
                 placeholder="e.g. Dhaka, Bangladesh"
                 {...register("location", { required: "Location is required" })}
-                className={`input input-bordered w-full bg-slate-50 focus:bg-white border-slate-200 focus:border-primary 500 focus:ring-1 focus:ring-primary 500 rounded-xl transition-all ${errors.location ? "border-red-500" : ""}`}
-                />
+                className={`input input-bordered w-full bg-base-200/40 focus:bg-base-100 border-base-300 focus:border-primary focus:ring-1 focus:ring-primary rounded-xl transition-all ${errors.location ? "border-error" : ""}`}
+              />
               {errors.location && (
-                <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                   {errors.location.message}
                 </span>
               )}
@@ -480,7 +477,7 @@ export default function AddTutors() {
             {/* Teaching Mode */}
             <div className="form-control w-full">
               <label className="label pb-2">
-                <span className="label-text font-medium text-xs uppercase tracking-wider text-slate-500">
+                <span className="label-text font-semibold text-xs uppercase tracking-wider text-base-content/60">
                   Teaching Mode
                 </span>
               </label>
@@ -491,27 +488,27 @@ export default function AddTutors() {
                       type="radio"
                       value={mode}
                       {...register("teachingMode", { required: "Select teaching mode" })}
-                      className="radio border-slate-300 checked:border-primary 600 radio-sm"
+                      className="radio border-base-300 checked:border-primary radio-sm animate-none"
                     />
-                    <span className="text-sm font-medium text-slate-600 group-hover:text-slate-900 transition-colors">
+                    <span className="text-sm font-medium text-base-content/80 group-hover:text-base-content transition-colors">
                       {mode}
                     </span>
                   </label>
                 ))}
               </div>
               {errors.teachingMode && (
-                <span className="text-red-500 text-xs mt-1.5 flex items-center gap-1">
-                  <span className="inline-full w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                <span className="text-error text-xs mt-1.5 flex items-center gap-1">
+                  <span className="inline-block w-1.5 h-1.5 rounded-full bg-error"></span>
                   {errors.teachingMode.message}
                 </span>
               )}
             </div>
 
             {/* Submit Button */}
-            <div className="pt-6 border-t border-slate-100">
+            <div className="pt-6 border-t border-base-200">
               <button
                 type="submit"
-                className="btn border-0 bg-primary 600 hover:bg-primary 700 text-white w-full rounded-xl shadow-md shadow-primary 100 font-medium transition-all duration-200 normal-case"
+                className="btn btn-primary text-white w-full rounded-xl shadow-md shadow-primary/20 font-semibold transition-all duration-200 normal-case"
                 disabled={isSubmitting || isUploading}
               >
                 {isSubmitting || isUploading ? (
