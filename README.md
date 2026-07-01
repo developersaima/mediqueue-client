@@ -4,7 +4,7 @@
 TutorsQueue is a modern tutor booking platform where students can browse tutors, book learning sessions, and manage their scheduled classes easily.
 
 ## 🌐 Live Website
-https://TutorsQueue-client-19f5.vercel.app
+https://tutorsqueue.vercel.app
 
 ## 🚀 Features
 - Firebase Authentication with Google Login
@@ -52,10 +52,6 @@ npm install
 npm run dev
 ````
 
-## 📌 Assignment Information
-
-Programming Hero – Batch 13
-Assignment 09 – Category 02
 
 ## 🔗 Repository Links
 
