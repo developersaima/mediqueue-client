@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "MediQueue",
+  title: "TutorsQueue",
 };
 
 export default function RootLayout({ children }) {

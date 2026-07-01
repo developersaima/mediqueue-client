@@ -1,10 +1,10 @@
 ````md
-# MediQueue – Tutor Booking System
+# TutorsQueue – Tutor Booking System
 
-MediQueue is a modern tutor booking platform where students can browse tutors, book learning sessions, and manage their scheduled classes easily.
+TutorsQueue is a modern tutor booking platform where students can browse tutors, book learning sessions, and manage their scheduled classes easily.
 
 ## 🌐 Live Website
-https://mediqueue-client-19f5.vercel.app
+https://TutorsQueue-client-19f5.vercel.app
 
 ## 🚀 Features
 - Firebase Authentication with Google Login
@@ -59,9 +59,9 @@ Assignment 09 – Category 02
 
 ## 🔗 Repository Links
 
-Client Repo: [https://github.com/developersaima/mediqueue-client](https://github.com/developersaima/mediqueue-client)
+Client Repo: [https://github.com/developersaima/TutorsQueue-client](https://github.com/developersaima/TutorsQueue-client)
 
-Server Repo: [https://github.com/developersaima/mediqueue-server](https://github.com/developersaima/mediqueue-server)
+Server Repo: [https://github.com/developersaima/TutorsQueue-server](https://github.com/developersaima/TutorsQueue-server)
 
 ```
 ```

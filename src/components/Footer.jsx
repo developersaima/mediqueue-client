@@ -8,7 +8,7 @@ export default function Footer() {
         
         
         <div className="space-y-4">
-          <h2 className="text-2xl font-black text-primary">MediQueue</h2>
+          <h2 className="text-2xl font-black text-primary">TutorsQueue</h2>
           <p className="text-sm text-base-content/60 leading-relaxed">
             Connecting students with expert tutors for medical and science excellence. Learn anytime, anywhere.
           </p>
@@ -29,7 +29,7 @@ export default function Footer() {
         <div className="space-y-4">
           <h6 className="font-bold text-base-content mb-2">Get in Touch</h6>
           <div className="flex items-center gap-3 text-sm text-base-content/70">
-            <LuMail className="text-primary" /> info@mediqueue.com
+            <LuMail className="text-primary" /> info@TutorsQueue.com
           </div>
           <div className="flex items-center gap-3 text-sm text-base-content/70">
             <LuPhone className="text-primary" /> +880 1234-567890
@@ -58,7 +58,7 @@ export default function Footer() {
 
       
       <div className="max-w-7xl mx-auto px-6 py-8 border-t border-base-200 text-center md:text-left text-sm text-base-content/50">
-        <p>© 2026 MediQueue Learning Platform. All rights reserved.</p>
+        <p>© 2026 TutorsQueue Learning Platform. All rights reserved.</p>
       </div>
     </footer>
   );

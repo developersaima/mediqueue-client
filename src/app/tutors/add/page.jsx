@@ -1,7 +1,7 @@
 import React from 'react'
 import AddTutors from '../../../pages/AddTutors'
 export const metadata={
-  title:"Add tutor - MediQueue"
+  title:"Add tutor - TutorsQueue"
 }
 const AddTutorsPage = () => {
   return (

@@ -2,7 +2,7 @@ import React from 'react'
 import Tutors from '../../pages/Tutor'
 
 export const metadata={
-  title:"Tuotor - MediQueue"
+  title:"Tuotor - TutorsQueue"
 }
 const TuotorPage = () => {
   return (
