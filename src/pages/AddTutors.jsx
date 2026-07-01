@@ -4,7 +4,8 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { authClient } from "../lib/auth-client";
 import { useState } from "react";
-import { LuUpload, LuUserPlus, LuCalendar, LuMapPin, LuBuilding, LuClock, LuDollarSign, LuLoader2 } from "react-icons/lu";
+import { LuUpload, LuUserPlus, LuCalendar, LuMapPin, LuBuilding, LuClock, LuDollarSign } from "react-icons/lu";
+import { FiLoader } from "react-icons/fi";
 
 // Add your ImageBB API key here
 const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_KEY
@@ -219,7 +220,7 @@ export default function AddTutors() {
                       />
                       {isUploading && (
                         <div className="absolute inset-0 flex items-center justify-center bg-base-100/50 rounded-lg">
-                          <LuLoader2 className="w-5 h-5 animate-spin text-primary" />
+                          <FiLoader className="w-5 h-5 animate-spin text-primary" />
                         </div>
                       )}
                     </div>

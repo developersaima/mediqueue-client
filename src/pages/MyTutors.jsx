@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
-import { LuX, LuTrash2, LuFolderGit2, LuUpload, LuLoader2 } from "react-icons/lu";
+import { LuX, LuTrash2, LuFolderGit2, LuUpload } from "react-icons/lu";
 import toast from "react-hot-toast";
 import { authClient, useSession } from "../lib/auth-client";
+import { FiLoader } from "react-icons/fi";
 
 const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_KEY;
 
@@ -455,7 +456,7 @@ export default function MyTutorsPage() {
                         />
                         {isUploading && (
                           <div className="absolute inset-0 flex items-center justify-center bg-base-100/50 rounded-lg">
-                            <LuLoader2 className="w-5 h-5 animate-spin text-primary" />
+                            <FiLoader className="w-5 h-5 animate-spin text-primary" />
                           </div>
                         )}
                       </div>
