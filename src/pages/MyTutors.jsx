@@ -1,8 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
-import { LuX, LuTrash2, LuFolderGit2, LuUpload } from "react-icons/lu";
+import { LuX, LuTrash2, LuFolderGit2, LuUpload, LuLoader2 } from "react-icons/lu";
 import toast from "react-hot-toast";
 import { authClient, useSession } from "../lib/auth-client";
+
+const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_KEY;
 
 export default function MyTutorsPage() {
   const { data: session, isPending } = useSession();
@@ -15,6 +17,7 @@ export default function MyTutorsPage() {
 
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editLoading, setEditLoading] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [imagePreview, setImagePreview] = useState(null);
   const [editFormData, setEditFormData] = useState({
     _id: "",
@@ -92,6 +95,38 @@ export default function MyTutorsPage() {
     }
   };
 
+  const uploadImageToImageBB = async (file) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("key", IMAGEBB_API_KEY);
+
+      const response = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const imageUrl = data.data.url;
+        setImagePreview(imageUrl);
+        setEditFormData(prev => ({ ...prev, photoURL: imageUrl }));
+        toast.success("Image uploaded successfully!");
+        return imageUrl;
+      } else {
+        throw new Error(data.error?.message || "Image upload failed");
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error("Failed to upload image. Please try again.");
+      return null;
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   const triggerEditModal = (tutor) => {
     const availableDays = tutor.availableDaysAndTime?.split(" ")[0] || "";
     const availableTime = tutor.availableDaysAndTime?.split(" ").slice(1).join(" ") || "";
@@ -115,20 +150,43 @@ export default function MyTutorsPage() {
     setIsEditModalOpen(true);
   };
 
-  const handleImageUpload = (e) => {
+  const handleImageUpload = async (e) => {
     const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        setEditFormData({ ...editFormData, photoURL: reader.result });
-      };
-      reader.readAsDataURL(file);
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please upload a valid image file (JPEG, PNG, GIF, WEBP)");
+      return;
     }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to ImageBB
+    await uploadImageToImageBB(file);
   };
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate photo URL
+    if (!editFormData.photoURL) {
+      toast.error("Please upload a profile photo");
+      return;
+    }
+
     setEditLoading(true);
     try {
       const baseUrl = process.env.NEXT_PUBLIC_URL || "http://localhost:5000";
@@ -137,6 +195,8 @@ export default function MyTutorsPage() {
       const formattedData = {
         ...editFormData,
         availableDaysAndTime: `${editFormData.availableDays} ${editFormData.availableTime}`,
+        hourlyFee: Number(editFormData.hourlyFee),
+        totalSlot: Number(editFormData.totalSlot),
       };
 
       const res = await fetch(`${baseUrl}/api/tutors/${editFormData._id}`, {
@@ -153,6 +213,9 @@ export default function MyTutorsPage() {
         setIsEditModalOpen(false);
         setImagePreview(null);
         fetchMyTutors();
+      } else {
+        const errorData = await res.json();
+        toast.error(errorData.message || "Failed to update tutor");
       }
     } catch (error) {
       toast.error("Failed to update tutor");
@@ -371,21 +434,34 @@ export default function MyTutorsPage() {
                   </label>
                   <div className="flex items-center gap-4">
                     <div className="avatar">
-                      <div className="w-16 h-16 rounded-full ring-2 ring-primary/20">
+                      <div className="w-16 h-16 rounded-full ring-2 ring-primary/20 overflow-hidden">
                         <img 
                           src={imagePreview || "https://via.placeholder.com/64"} 
                           alt="Preview"
-                          className="object-cover"
+                          className="w-full h-full object-cover"
                         />
                       </div>
                     </div>
                     <div className="flex-1">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        className="file-input file-input-bordered w-full file-input-sm"
-                      />
+                      <div className="relative">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          disabled={isUploading}
+                          className={`file-input file-input-bordered w-full file-input-sm transition-all ${
+                            isUploading ? "file-input-disabled opacity-50" : "focus:file-input-primary"
+                          }`}
+                        />
+                        {isUploading && (
+                          <div className="absolute inset-0 flex items-center justify-center bg-base-100/50 rounded-lg">
+                            <LuLoader2 className="w-5 h-5 animate-spin text-primary" />
+                          </div>
+                        )}
+                      </div>
+                      <p className="text-xs text-base-content/40 mt-1">
+                        Max size: 5MB • Supported: JPEG, PNG, GIF, WEBP
+                      </p>
                     </div>
                   </div>
                 </div>
@@ -406,6 +482,9 @@ export default function MyTutorsPage() {
                     <option value="Biology">Biology</option>
                     <option value="English">English</option>
                     <option value="Computer Science">Computer Science</option>
+                    <option value="Economics">Economics</option>
+                    <option value="Accounting">Accounting</option>
+                    <option value="Business Studies">Business Studies</option>
                   </select>
                 </div>
 
@@ -519,12 +598,12 @@ export default function MyTutorsPage() {
                     className="select select-bordered w-full focus:select-primary transition-all"
                     required
                   >
-                    <option value="0-1 years">0-1 years</option>
+                    <option value="0-1 years">0-1 years (Fresher)</option>
                     <option value="1-2 years">1-2 years</option>
                     <option value="2-3 years">2-3 years</option>
                     <option value="3-5 years">3-5 years</option>
                     <option value="5-10 years">5-10 years</option>
-                    <option value="10+ years">10+ years</option>
+                    <option value="10+ years">10+ years (Expert)</option>
                   </select>
                 </div>
 
@@ -572,14 +651,14 @@ export default function MyTutorsPage() {
                   type="button"
                   onClick={() => { setIsEditModalOpen(false); setImagePreview(null); }}
                   className="btn btn-ghost hover:bg-base-200"
-                  disabled={editLoading}
+                  disabled={editLoading || isUploading}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   className="btn btn-primary px-8 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
-                  disabled={editLoading}
+                  disabled={editLoading || isUploading}
                 >
                   {editLoading ? <span className="loading loading-spinner loading-sm"></span> : "Save Changes"}
                 </button>

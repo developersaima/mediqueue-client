@@ -4,18 +4,21 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import { authClient } from "../lib/auth-client";
 import { useState } from "react";
-import { LuUpload, LuUserPlus, LuCalendar, LuMapPin, LuBuilding, LuClock, LuDollarSign } from "react-icons/lu";
+import { LuUpload, LuUserPlus, LuCalendar, LuMapPin, LuBuilding, LuClock, LuDollarSign, LuLoader2 } from "react-icons/lu";
 
+// Add your ImageBB API key here
+const IMAGEBB_API_KEY = process.env.NEXT_PUBLIC_IMGBB_KEY
 export default function AddTutors() {
   const router = useRouter();
   const [imagePreview, setImagePreview] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
 
   const {
     register,
     handleSubmit,
     reset,
-    watch,
+    setValue,
     formState: { errors },
   } = useForm({
     defaultValues: {
@@ -34,26 +37,77 @@ export default function AddTutors() {
     }
   });
 
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setImagePreview(reader.result);
-        // You can set the photo URL to the base64 or handle upload to server
-        // For now, we'll store the base64 in the form
-        document.querySelector('input[name="photo"]').value = reader.result;
-      };
-      reader.readAsDataURL(file);
+  const uploadImageToImageBB = async (file) => {
+    setIsUploading(true);
+    try {
+      const formData = new FormData();
+      formData.append("image", file);
+      formData.append("key", IMAGEBB_API_KEY);
+
+      const response = await fetch("https://api.imgbb.com/1/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const imageUrl = data.data.url;
+        setImagePreview(imageUrl);
+        setValue("photo", imageUrl);
+        toast.success("Image uploaded successfully!");
+        return imageUrl;
+      } else {
+        throw new Error(data.error?.message || "Image upload failed");
+      }
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error("Failed to upload image. Please try again.");
+      return null;
+    } finally {
+      setIsUploading(false);
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validate file type
+    const validTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+      toast.error("Please upload a valid image file (JPEG, PNG, GIF, WEBP)");
+      return;
+    }
+
+    // Validate file size (max 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image size should be less than 5MB");
+      return;
+    }
+
+    // Show local preview immediately
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setImagePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to ImageBB
+    await uploadImageToImageBB(file);
+  };
+
   const onSubmit = async (data) => {
+    // Validate photo URL
+    if (!data.photo) {
+      toast.error("Please upload a profile photo");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { data: tokenData } = await authClient.token();
 
-      // Combine days and time
       const formattedData = {
         ...data,
         availableSlots: `${data.availableDays} ${data.availableTime}`,
@@ -61,7 +115,6 @@ export default function AddTutors() {
         totalSlot: Number(data.totalSlot),
       };
 
-      // Remove the individual fields
       delete formattedData.availableDays;
       delete formattedData.availableTime;
 
@@ -90,9 +143,6 @@ export default function AddTutors() {
       setIsSubmitting(false);
     }
   };
-
-  // Watch for image upload field changes
-  const watchPhoto = watch("photo");
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-base-200/40 via-base-100 to-base-200/20 py-12 px-4 md:px-8">
@@ -148,25 +198,38 @@ export default function AddTutors() {
                 </label>
                 <div className="flex items-center gap-4">
                   <div className="avatar">
-                    <div className={`w-16 h-16 rounded-full ring-2 ${imagePreview ? "ring-primary/40" : "ring-base-300"} flex items-center justify-center bg-base-200`}>
+                    <div className={`w-16 h-16 rounded-full ring-2 ${imagePreview ? "ring-primary/40" : "ring-base-300"} flex items-center justify-center bg-base-200 overflow-hidden`}>
                       {imagePreview ? (
-                        <img src={imagePreview} alt="Preview" className="object-cover rounded-full" />
+                        <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
                       ) : (
                         <LuUpload className="w-6 h-6 text-base-content/30" />
                       )}
                     </div>
                   </div>
                   <div className="flex-1">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="file-input file-input-bordered w-full file-input-sm focus:file-input-primary transition-all"
-                    />
+                    <div className="relative">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        disabled={isUploading}
+                        className={`file-input file-input-bordered w-full file-input-sm transition-all ${
+                          isUploading ? "file-input-disabled opacity-50" : "focus:file-input-primary"
+                        }`}
+                      />
+                      {isUploading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-base-100/50 rounded-lg">
+                          <LuLoader2 className="w-5 h-5 animate-spin text-primary" />
+                        </div>
+                      )}
+                    </div>
                     <input
                       type="hidden"
                       {...register("photo", { required: "Photo is required" })}
                     />
+                    <p className="text-xs text-base-content/40 mt-1">
+                      Max size: 5MB • Supported: JPEG, PNG, GIF, WEBP
+                    </p>
                   </div>
                 </div>
                 {errors.photo && (
@@ -454,12 +517,12 @@ export default function AddTutors() {
               <button
                 type="submit"
                 className="btn btn-primary w-full shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all duration-300"
-                disabled={isSubmitting}
+                disabled={isSubmitting || isUploading}
               >
-                {isSubmitting ? (
+                {isSubmitting || isUploading ? (
                   <>
                     <span className="loading loading-spinner loading-sm"></span>
-                    Adding Tutor...
+                    {isUploading ? "Uploading Image..." : "Adding Tutor..."}
                   </>
                 ) : (
                   <>
